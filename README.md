@@ -34,7 +34,7 @@ Alasan singkat: Express dipilih karena ringan untuk membuat REST API, MySQL coco
    http://localhost:3000
    ```
 
-Database `travelku_booking` dan tabel `bookings` akan dibuat otomatis saat server pertama kali berjalan.
+Database `travelku_booking`, tabel `packages`, dan tabel `bookings` akan dibuat otomatis saat server pertama kali berjalan. Data awal paket wisata juga akan diisi otomatis.
 
 ## Fitur Selesai
 
@@ -59,7 +59,6 @@ Database `travelku_booking` dan tabel `bookings` akan dibuat otomatis saat serve
 
 - Autentikasi staf dan riwayat pembuat booking.
 - Deploy online.
-- 
 
 ## Asumsi dan Keputusan Teknis
 
