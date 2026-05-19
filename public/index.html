@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travelku Booking</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="page-header">
+        <div>
+          <p class="eyebrow">Travelku Booking</p>
+          <h1>Manajemen Booking Travel</h1>
+        </div>
+        <div class="api-status" id="apiStatus" role="status">
+          <span class="status-dot"></span>
+          <span>Menunggu API</span>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Ringkasan booking">
+        <article class="summary-card">
+          <span>Total Booking</span>
+          <strong id="summaryTotal">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Menunggu</span>
+          <strong id="summaryPending">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Dikonfirmasi</span>
+          <strong id="summaryConfirmed">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Estimasi Pendapatan</span>
+          <strong id="summaryRevenue">Rp0</strong>
+        </article>
+      </section>
+
+      <section class="workspace-grid">
+        <section class="panel form-panel" aria-labelledby="formTitle">
+          <div class="panel-header">
+            <div>
+              <p class="section-label">Form</p>
+              <h2 id="formTitle">Tambah Booking</h2>
+            </div>
+            <button class="secondary-button compact hidden" id="cancelEditButton" type="button">
+              Batal Edit
+            </button>
+          </div>
+
+          <form id="bookingForm" novalidate>
+            <input type="hidden" id="bookingId" />
+
+            <div class="field">
+              <label for="customerName">Nama pemesan</label>
+              <input id="customerName" name="customerName" type="text" autocomplete="name" required />
+              <small class="error-text" data-error-for="customerName"></small>
+            </div>
+
+            <div class="two-column">
+              <div class="field">
+                <label for="customerEmail">Kontak utama</label>
+                <input id="customerEmail" name="customerEmail" type="text" autocomplete="email" required />
+                <small class="error-text" data-error-for="customerEmail"></small>
+              </div>
+              <div class="field">
+                <label for="customerPhone">Kontak tambahan</label>
+                <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" />
+                <small class="error-text" data-error-for="customerPhone"></small>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="packageName">Paket travel</label>
+              <input id="packageName" name="packageName" list="packageOptions" type="text" required />
+              <datalist id="packageOptions">
+                <option value="Bali 3 Hari 2 Malam"></option>
+                <option value="Lombok Honeymoon"></option>
+                <option value="Jogja Heritage"></option>
+                <option value="Labuan Bajo Explorer"></option>
+                <option value="Raja Ampat Adventure"></option>
+              </datalist>
+              <small class="error-text" data-error-for="packageName"></small>
+            </div>
+
+            <div class="two-column">
+              <div class="field">
+                <label for="bookingDate">Tanggal keberangkatan</label>
+                <input id="bookingDate" name="bookingDate" type="date" required />
+                <small class="error-text" data-error-for="bookingDate"></small>
+              </div>
+              <div class="field">
+                <label for="guestCount">Jumlah peserta</label>
+                <input id="guestCount" name="guestCount" type="number" min="1" step="1" required />
+                <small class="error-text" data-error-for="guestCount"></small>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="estimatedPrice">Harga per orang</label>
+              <input id="estimatedPrice" name="estimatedPrice" type="number" min="0" step="1000" required />
+              <small class="error-text" data-error-for="estimatedPrice"></small>
+            </div>
+
+            <div class="field">
+              <label for="notes">Catatan</label>
+              <textarea id="notes" name="notes" rows="3"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="primary-button" id="submitButton" type="submit">Simpan Booking</button>
+              <button class="secondary-button" id="resetButton" type="button">Reset</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel data-panel" aria-labelledby="tableTitle">
+          <div class="panel-header table-header">
+            <div>
+              <p class="section-label">Data</p>
+              <h2 id="tableTitle">Daftar Booking</h2>
+            </div>
+            <button class="secondary-button compact" id="refreshButton" type="button">Refresh</button>
+          </div>
+
+          <div class="filters" aria-label="Filter booking">
+            <div class="field">
+              <label for="filterStatus">Status</label>
+              <select id="filterStatus">
+                <option value="">Semua status</option>
+                <option value="Menunggu">Menunggu</option>
+                <option value="Dikonfirmasi">Dikonfirmasi</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Dibatalkan">Dibatalkan</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filterPackage">Paket</label>
+              <input id="filterPackage" type="search" placeholder="Cari paket" />
+            </div>
+            <div class="field">
+              <label for="filterStartDate">Dari tanggal</label>
+              <input id="filterStartDate" type="date" />
+            </div>
+            <div class="field">
+              <label for="filterEndDate">Sampai tanggal</label>
+              <input id="filterEndDate" type="date" />
+            </div>
+            <button class="secondary-button filter-button" id="clearFilterButton" type="button">Bersihkan</button>
+          </div>
+
+          <div class="message hidden" id="messageBox"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pemesan</th>
+                  <th>Paket</th>
+                  <th>Tanggal</th>
+                  <th>Peserta</th>
+                  <th>Harga</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="bookingTableBody">
+                <tr>
+                  <td colspan="7" class="empty-cell">Belum ada data.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <template id="bookingRowTemplate">
+      <tr>
+        <td data-label="Pemesan">
+          <div class="customer-cell">
+            <strong data-field="name"></strong>
+            <span data-field="contact"></span>
+          </div>
+        </td>
+        <td data-label="Paket" data-field="package"></td>
+        <td data-label="Tanggal" data-field="date"></td>
+        <td data-label="Peserta" data-field="guests"></td>
+        <td data-label="Harga" data-field="price"></td>
+        <td data-label="Status">
+          <select class="status-select" data-action="status">
+            <option value="Menunggu">Menunggu</option>
+            <option value="Dikonfirmasi">Dikonfirmasi</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Dibatalkan">Dibatalkan</option>
+          </select>
+        </td>
+        <td data-label="Aksi">
+          <div class="row-actions">
+            <button class="secondary-button compact" type="button" data-action="edit">Edit</button>
+            <button class="danger-button compact" type="button" data-action="delete">Hapus</button>
+          </div>
+        </td>
+      </tr>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
