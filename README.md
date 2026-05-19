@@ -43,51 +43,58 @@ Database `travelku_booking` dan tabel `bookings` akan dibuat otomatis saat serve
 - Edit dan hapus booking.
 - Ubah status booking sesuai alur: `Menunggu -> Dikonfirmasi/Dibatalkan`, `Dikonfirmasi -> Selesai/Dibatalkan`, dan status akhir tidak bisa diubah lagi.
 - Filter berdasarkan status, paket wisata, dan rentang tanggal keberangkatan.
+- Pencarian berdasarkan nama pemesan atau kontak.
 - Ringkasan jumlah booking dan estimasi pendapatan berdasarkan filter aktif.
 - Validasi server untuk nama, kontak, paket, tanggal keberangkatan, jumlah peserta, dan harga per orang.
+- Modul paket wisata terpisah melalui tabel `packages`; booking menyimpan relasi `package_id`.
+- Validasi kapasitas paket berdasarkan paket dan tanggal keberangkatan.
+- Pagination daftar booking.
+- Export daftar booking ke CSV sesuai filter aktif.
 - Data tersimpan di database MySQL.
 - Frontend dan backend berkomunikasi melalui REST API JSON.
 - Tampilan responsive untuk layar kecil.
+- Unit test untuk aturan transisi status.
 
 ## Fitur Belum Selesai
 
-- Pencarian berdasarkan nama pemesan atau kontak.
-- Modul paket wisata terpisah dengan relasi tabel.
-- Validasi kapasitas paket.
-- Pagination.
-- Export CSV.
 - Autentikasi staf dan riwayat pembuat booking.
-- Unit test.
 - Deploy online.
 
 ## Asumsi dan Keputusan Teknis
 
-- Paket wisata masih disimpan sebagai teks bebas karena modul paket wisata bersifat bonus.
+- Paket wisata disimpan di tabel `packages`, sementara `bookings.package_name` tetap disimpan sebagai snapshot nama paket saat booking dibuat.
 - Kontak disimpan dalam satu kolom agar sesuai requirement yang meminta nomor telepon atau email.
 - Booking baru selalu dibuat dengan status `Menunggu`; perubahan status dilakukan dari tabel daftar booking.
 - Estimasi pendapatan dihitung dari `jumlah peserta x harga per orang` hanya untuk status `Dikonfirmasi` dan `Selesai`.
 - Tanggal keberangkatan tidak boleh di masa lalu dan validasi ini dilakukan di backend.
+- Kapasitas dihitung per paket dan tanggal keberangkatan, dengan mengecualikan booking berstatus `Dibatalkan`.
 
 ## API Backend
 
 - `GET /api/bookings`
+- `GET /api/bookings/export`
 - `GET /api/bookings/:id`
 - `POST /api/bookings`
 - `PUT /api/bookings/:id`
 - `DELETE /api/bookings/:id`
 - `PATCH /api/bookings/:id/status`
+- `GET /api/packages`
 - `GET /api/summary`
 
 Filter booking dan summary:
 
 ```text
-?status=Menunggu&package=Bali&startDate=2026-05-20&endDate=2026-05-30
+?search=andi&status=Menunggu&package=Bali&startDate=2026-05-20&endDate=2026-05-30&page=1&limit=10
+```
+
+Menjalankan test:
+
+```bash
+npm test
 ```
 
 ## Perbaikan Jika Ada Waktu Lebih
 
-- Menambahkan tabel `packages` agar paket dipilih dari data master.
-- Menambahkan test untuk aturan transisi status.
-- Menambahkan pagination dan pencarian nama/kontak untuk data besar.
-- Menambahkan export CSV untuk laporan staf.
 - Menambahkan autentikasi staf dan audit trail.
+- Menambahkan halaman CRUD khusus paket wisata untuk staf admin.
+- Menambahkan deploy online dan database cloud.

@@ -73,16 +73,11 @@
             </div>
 
             <div class="field">
-              <label for="packageName">Paket travel</label>
-              <input id="packageName" name="packageName" list="packageOptions" type="text" required />
-              <datalist id="packageOptions">
-                <option value="Bali 3 Hari 2 Malam"></option>
-                <option value="Lombok Honeymoon"></option>
-                <option value="Jogja Heritage"></option>
-                <option value="Labuan Bajo Explorer"></option>
-                <option value="Raja Ampat Adventure"></option>
-              </datalist>
-              <small class="error-text" data-error-for="packageName"></small>
+              <label for="packageSelect">Paket travel</label>
+              <select id="packageSelect" name="packageSelect" required>
+                <option value="">Pilih paket</option>
+              </select>
+              <small class="error-text" data-error-for="packageSelect"></small>
             </div>
 
             <div class="two-column">
@@ -122,10 +117,17 @@
               <p class="section-label">Data</p>
               <h2 id="tableTitle">Daftar Booking</h2>
             </div>
-            <button class="secondary-button compact" id="refreshButton" type="button">Refresh</button>
+            <div class="header-actions">
+              <button class="secondary-button compact" id="exportButton" type="button">Export CSV</button>
+              <button class="secondary-button compact" id="refreshButton" type="button">Refresh</button>
+            </div>
           </div>
 
           <div class="filters" aria-label="Filter booking">
+            <div class="field">
+              <label for="filterSearch">Cari nama/kontak</label>
+              <input id="filterSearch" type="search" placeholder="Nama atau kontak" />
+            </div>
             <div class="field">
               <label for="filterStatus">Status</label>
               <select id="filterStatus">
@@ -172,6 +174,21 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="pagination-bar" aria-label="Pagination booking">
+            <span id="paginationSummary">Menampilkan 0 data</span>
+            <div class="pagination-controls">
+              <select id="pageSize" aria-label="Jumlah data per halaman">
+                <option value="5">5 / halaman</option>
+                <option value="10" selected>10 / halaman</option>
+                <option value="20">20 / halaman</option>
+                <option value="50">50 / halaman</option>
+              </select>
+              <button class="secondary-button compact" id="prevPageButton" type="button">Sebelumnya</button>
+              <span id="pageIndicator">Halaman 1</span>
+              <button class="secondary-button compact" id="nextPageButton" type="button">Berikutnya</button>
+            </div>
           </div>
         </section>
       </section>
