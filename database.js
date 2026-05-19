@@ -12,13 +12,10 @@ const connectionConfig = {
 
 const defaultPackages = [
   ['Bali 4D3N', 30, 2500000],
-  ['Bali 3 Hari 2 Malam', 30, 2100000],
   ['Lombok 3D2N', 24, 1800000],
-  ['Lombok Honeymoon', 16, 2400000],
   ['Yogyakarta 2D1N', 35, 1200000],
-  ['Jogja Heritage', 35, 1300000],
-  ['Labuan Bajo Explorer', 18, 4500000],
-  ['Raja Ampat Adventure', 12, 7800000]
+  ['Labuan Bajo 4D3N', 18, 4500000],
+  ['Raja Ampat 5D4N', 12, 7800000]
 ];
 
 let pool;
@@ -90,7 +87,14 @@ async function ensurePackagesTable() {
        capacity = VALUES(capacity),
        price_per_person = VALUES(price_per_person),
        is_active = 1`,
-    [defaultPackages]
+     [defaultPackages]
+  );
+
+  await pool.query(
+    `UPDATE packages
+     SET is_active = 0
+     WHERE name NOT IN (?)`,
+    [defaultPackages.map(([name]) => name)]
   );
 }
 
