@@ -59,6 +59,7 @@ Database `travelku_booking` dan tabel `bookings` akan dibuat otomatis saat serve
 
 - Autentikasi staf dan riwayat pembuat booking.
 - Deploy online.
+- 
 
 ## Asumsi dan Keputusan Teknis
 
