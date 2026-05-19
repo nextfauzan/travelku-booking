@@ -71,21 +71,61 @@ Database `travelku_booking`, tabel `packages`, dan tabel `bookings` akan dibuat 
 
 ## API Backend
 
-- `GET /api/bookings`
-- `GET /api/bookings/export`
-- `GET /api/bookings/:id`
-- `POST /api/bookings`
-- `PUT /api/bookings/:id`
-- `DELETE /api/bookings/:id`
-- `PATCH /api/bookings/:id/status`
-- `GET /api/packages`
-- `GET /api/summary`
+Backend menyediakan REST API berbasis JSON. Frontend mengirim request ke endpoint `/api/...`, backend memvalidasi data, menjalankan query ke MySQL, lalu mengembalikan response JSON. Jika input tidak valid, backend mengembalikan status `400` beserta pesan error. Jika data tidak ditemukan, backend mengembalikan status `404`.
 
-Filter booking dan summary:
+| Method | Endpoint | Fungsi |
+| --- | --- | --- |
+| `GET` | `/api/packages` | Mengambil daftar paket wisata aktif untuk pilihan di form booking. |
+| `GET` | `/api/bookings` | Mengambil daftar booking, diurutkan dari data terbaru, mendukung filter dan pagination. |
+| `GET` | `/api/bookings/:id` | Mengambil detail satu booking berdasarkan ID. |
+| `POST` | `/api/bookings` | Membuat booking baru. Status awal otomatis menjadi `Menunggu`. |
+| `PUT` | `/api/bookings/:id` | Mengubah data booking yang sudah ada. |
+| `PATCH` | `/api/bookings/:id/status` | Mengubah status booking sesuai aturan transisi status. |
+| `DELETE` | `/api/bookings/:id` | Menghapus booking berdasarkan ID. |
+| `GET` | `/api/summary` | Mengambil ringkasan jumlah booking dan estimasi pendapatan berdasarkan filter aktif. |
+| `GET` | `/api/bookings/export` | Mengexport daftar booking ke file CSV sesuai filter aktif. |
+
+Query filter yang dapat digunakan pada `/api/bookings`, `/api/summary`, dan `/api/bookings/export`:
 
 ```text
 ?search=andi&status=Menunggu&package=Bali&startDate=2026-05-20&endDate=2026-05-30&page=1&limit=10
 ```
+
+Keterangan query:
+
+- `search`: mencari berdasarkan nama pemesan atau kontak.
+- `status`: filter status booking, misalnya `Menunggu`, `Dikonfirmasi`, `Selesai`, atau `Dibatalkan`.
+- `package`: filter nama paket wisata.
+- `startDate` dan `endDate`: filter rentang tanggal keberangkatan.
+- `page` dan `limit`: pagination untuk daftar booking.
+
+Contoh body untuk membuat atau mengubah booking:
+
+```json
+{
+  "customer_name": "Andi Saputra",
+  "contact": "08123456789 | andi@gmail.com",
+  "package_id": 1,
+  "departure_date": "2026-05-25",
+  "participants": 2,
+  "price_per_person": 2500000,
+  "note": "Minta kamar dekat lift"
+}
+```
+
+Contoh body untuk mengubah status booking:
+
+```json
+{
+  "status": "Dikonfirmasi"
+}
+```
+
+Aturan perubahan status:
+
+- `Menunggu` hanya bisa menjadi `Dikonfirmasi` atau `Dibatalkan`.
+- `Dikonfirmasi` hanya bisa menjadi `Selesai` atau `Dibatalkan`.
+- `Selesai` dan `Dibatalkan` adalah status akhir, sehingga tidak bisa diubah lagi.
 
 Menjalankan test:
 
@@ -98,3 +138,4 @@ npm test
 - Menambahkan autentikasi staf dan audit trail.
 - Menambahkan halaman CRUD khusus paket wisata untuk staf admin.
 - Menambahkan deploy online dan database cloud.
+
